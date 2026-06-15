@@ -1,0 +1,11 @@
+site_name: Docs-as-Code Pilot
+site_description: Sample documentation site for the docs-as-code transition
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Configuration: configuration.md
+  - Troubleshooting: troubleshooting.md
