@@ -34,3 +34,28 @@ jobs:
           echo "Title: ${{ inputs.title }}"
           echo "Type: ${{ inputs.document_type }}"
           echo "Owner: ${{ inputs.owner }}"
+
+      - name: Create document
+        run: |
+          mkdir -p docs/${{ inputs.document_type }}
+
+          FILE_NAME=$(echo "${{ inputs.title }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+
+          cat > docs/${{ inputs.document_type }}/$FILE_NAME.md <<EOF
+          ---
+          title: ${{ inputs.title }}
+          owner: ${{ inputs.owner }}
+          author: ${{ github.actor }}
+          status: Draft
+          created: $(date +%F)
+          ---
+      
+          # ${{ inputs.title }}
+      
+          ## Purpose
+      
+          ## Content
+          EOF
+      
+          echo "Document created:"
+          ls -R docs
