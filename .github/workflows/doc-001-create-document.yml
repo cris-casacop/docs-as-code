@@ -37,23 +37,14 @@ jobs:
 
       - name: Create document
         run: |
-          mkdir -p docs/${{ inputs.document_type }}
-      
+          mkdir -p docs/runbooks
+
           FILE_NAME=$(echo "${{ inputs.title }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
-      
-          cp templates/runbook-template.md docs/runbooks/database-backup.md
-          ---
-          title: ${{ inputs.title }}
-          owner: ${{ inputs.owner }}
-          author: ${{ github.actor }}
-          ---
-      
-          # ${{ inputs.title }}
-      
-          ## Purpose
-      
-          ## Content
-          EOF
+
+          cp templates/runbook-template.md docs/runbooks/$FILE_NAME.md
+
+          echo "Created:"
+          find docs
       
           echo "Created:"
           find docs
