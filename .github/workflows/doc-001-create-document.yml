@@ -35,8 +35,25 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
-      - name: Display Inputs
+      - name: Create document
         run: |
-          echo "Title: ${{ inputs.title }}"
-          echo "Type: ${{ inputs.document_type }}"
-          echo "Owner: ${{ inputs.owner }}"
+          mkdir -p docs/${{ inputs.document_type }}
+      
+          FILE_NAME=$(echo "${{ inputs.title }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+      
+          cat > docs/${{ inputs.document_type }}/$FILE_NAME.md <<EOF
+          ---
+          title: ${{ inputs.title }}
+          owner: ${{ inputs.owner }}
+          author: ${{ github.actor }}
+          ---
+      
+          # ${{ inputs.title }}
+      
+          ## Purpose
+      
+          ## Content
+          EOF
+      
+          echo "Created:"
+          find docs
