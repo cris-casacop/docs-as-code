@@ -1,8 +1,5 @@
 name: DOC-001 - Create Document
 
-permissions:
-  contents: write
-
 on:
   workflow_dispatch:
     inputs:
@@ -27,6 +24,9 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: write
+
 jobs:
   create-document:
     runs-on: ubuntu-latest
@@ -35,38 +35,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
-      - name: Create document
+      - name: Display Inputs
         run: |
-          mkdir -p docs/${{ inputs.document_type }}
-
-          FILE_NAME=$(echo "${{ inputs.title }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
-
-          cat > docs/${{ inputs.document_type }}/$FILE_NAME.md <<EOF
-          ---
-          title: ${{ inputs.title }}
-          owner: ${{ inputs.owner }}
-          author: ${{ github.actor }}
-          status: Draft
-          created: $(date +%F)
-          ---
-
-          # ${{ inputs.title }}
-
-          ## Purpose
-
-          ## Content
-          EOF
-
-          echo "Document created successfully."
-          ls -R docs
-
-      - name: Commit generated document
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-    
-        git add docs/
-    
-        git commit -m "DOC-001: Create ${{ inputs.title }}"
-    
-        git push
+          echo "Title: ${{ inputs.title }}"
+          echo "Type: ${{ inputs.document_type }}"
+          echo "Owner: ${{ inputs.owner }}"
