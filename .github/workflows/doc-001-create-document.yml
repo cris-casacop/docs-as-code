@@ -44,10 +44,10 @@ jobs:
           cp templates/${{ inputs.document_type }}-template.md \
            docs/${{ inputs.document_type }}/$FILE_NAME.md
 
-          sed -i "s/{{TITLE}}/${{ inputs.title }}/g" docs/runbooks/$FILE_NAME.md
-          sed -i "s/{{OWNER}}/${{ inputs.owner }}/g" docs/runbooks/$FILE_NAME.md
-          sed -i "s/{{AUTHOR}}/${{ github.actor }}/g" docs/runbooks/$FILE_NAME.md
-          sed -i "s/{{DATE}}/$(date +%F)/g" docs/runbooks/$FILE_NAME.md
+          sed -i "s/{{TITLE}}/${{ inputs.title }}/g" docs/${{ inputs.document_type }}/$FILE_NAME.md
+          sed -i "s/{{OWNER}}/${{ inputs.owner }}/g" docs/${{ inputs.document_type }}/$FILE_NAME.md
+          sed -i "s/{{AUTHOR}}/${{ github.actor }}/g" docs/${{ inputs.document_type }}/$FILE_NAME.md
+          sed -i "s/{{DATE}}/$(date +%F)/g" docs/${{ inputs.document_type }}/$FILE_NAME.md
       
           echo "Created:"
           find docs
