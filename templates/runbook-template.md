@@ -1,20 +1,19 @@
 ---
-title:
-owner:
-status: draft
-created:
+title: {{TITLE}}
+owner: {{OWNER}}
+author: {{AUTHOR}}
+created: {{DATE}}
+status: Draft
 ---
 
-# Overview
+# {{TITLE}}
 
-# Purpose
+## Purpose
 
-# Prerequisites
+## Scope
 
-# Procedure
+## Procedure
 
-# Validation
+## Validation
 
-# Rollback
-
-# References
+## References
