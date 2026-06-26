@@ -43,8 +43,10 @@ jobs:
 
           cp templates/runbook-template.md docs/runbooks/$FILE_NAME.md
 
-          echo "Created:"
-          find docs
+          sed -i "s/{{TITLE}}/${{ inputs.title }}/g" docs/runbooks/$FILE_NAME.md
+          sed -i "s/{{OWNER}}/${{ inputs.owner }}/g" docs/runbooks/$FILE_NAME.md
+          sed -i "s/{{AUTHOR}}/${{ github.actor }}/g" docs/runbooks/$FILE_NAME.md
+          sed -i "s/{{DATE}}/$(date +%F)/g" docs/runbooks/$FILE_NAME.md
       
           echo "Created:"
           find docs
