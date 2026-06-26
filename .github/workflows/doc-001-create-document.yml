@@ -29,11 +29,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Display Inputs
-        run: |
-          echo "Title: ${{ inputs.title }}"
-          echo "Type: ${{ inputs.document_type }}"
-          echo "Owner: ${{ inputs.owner }}"
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Create document
         run: |
@@ -49,13 +46,13 @@ jobs:
           status: Draft
           created: $(date +%F)
           ---
-      
+
           # ${{ inputs.title }}
-      
+
           ## Purpose
-      
+
           ## Content
           EOF
-      
-          echo "Document created:"
+
+          echo "Document created successfully."
           ls -R docs
