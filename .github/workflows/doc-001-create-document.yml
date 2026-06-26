@@ -1,7 +1,7 @@
 name: DOC-001 - Create Document
 
 permissions:
-  content: write
+  contents: write
 
 on:
   workflow_dispatch:
