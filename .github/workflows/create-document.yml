@@ -1,1 +1,116 @@
+name: DOC-001 - Create Document
 
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Document Title"
+        required: true
+        type: string
+
+      document_type:
+        description: "Document Type"
+        required: true
+        type: choice
+        options:
+          - api
+          - architecture
+          - runbook
+          - troubleshooting
+          - user-guide
+
+      owner:
+        description: "Document Owner"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-document:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate file name
+        id: filename
+        run: |
+          FILE_NAME=$(echo "${{ inputs.title }}" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed 's/[^a-zA-Z0-9 ]//g' \
+            | tr ' ' '-')
+
+          echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
+
+      - name: Determine destination folder
+        run: |
+          case "${{ inputs.document_type }}" in
+            api)
+              echo "DESTINATION=docs/api" >> $GITHUB_ENV
+              ;;
+            architecture)
+              echo "DESTINATION=docs/architecture" >> $GITHUB_ENV
+              ;;
+            runbook)
+              echo "DESTINATION=docs/runbooks" >> $GITHUB_ENV
+              ;;
+            troubleshooting)
+              echo "DESTINATION=docs/troubleshooting" >> $GITHUB_ENV
+              ;;
+            user-guide)
+              echo "DESTINATION=docs/user-guides" >> $GITHUB_ENV
+              ;;
+          esac
+
+      - name: Copy template
+        run: |
+          cp templates/${{ inputs.document_type }}-template.md \
+             $DESTINATION/$FILE_NAME.md
+
+      - name: Replace template placeholders
+        run: |
+          sed -i "s/{{TITLE}}/${{ inputs.title }}/g" $DESTINATION/$FILE_NAME.md
+          sed -i "s/{{OWNER}}/${{ inputs.owner }}/g" $DESTINATION/$FILE_NAME.md
+          sed -i "s/{{AUTHOR}}/${{ github.actor }}/g" $DESTINATION/$FILE_NAME.md
+          sed -i "s/{{DATE}}/$(date +%F)/g" $DESTINATION/$FILE_NAME.md
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Create branch
+        run: |
+          git checkout -b docs/${FILE_NAME}
+
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "DOC-001: Create document '${{ inputs.title }}'"
+
+      - name: Push branch
+        run: |
+          git push --set-upstream origin docs/${FILE_NAME}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: docs/${{ env.FILE_NAME }}
+          title: "DOC-001: Create '${{ inputs.title }}'"
+          body: |
+            ## Summary
+
+            This pull request was generated automatically by the **DOC-001 - Create Document** workflow.
+
+            ### Details
+            - **Title:** ${{ inputs.title }}
+            - **Type:** ${{ inputs.document_type }}
+            - **Owner:** ${{ inputs.owner }}
+            - **Author:** ${{ github.actor }}
+
+            Please review the generated document before merging.
