@@ -41,7 +41,7 @@ jobs:
       
           FILE_NAME=$(echo "${{ inputs.title }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
       
-          cat > docs/${{ inputs.document_type }}/$FILE_NAME.md <<EOF
+          cp templates/runbook-template.md docs/runbooks/database-backup.md
           ---
           title: ${{ inputs.title }}
           owner: ${{ inputs.owner }}
