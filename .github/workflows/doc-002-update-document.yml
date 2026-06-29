@@ -35,7 +35,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
-      - name: Workflow Started
+      - name: Locate document
         run: |
-          echo "DOC-002 - Update Document"
-          echo "Workflow started successfully."
+          FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
+
+          echo "Looking for:"
+          echo "$FILE"
+
+          if [ -f "$FILE" ]; then
+            echo "Document found."
+          else
+            echo "Document not found!"
+            exit 1
+          fi
