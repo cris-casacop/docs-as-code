@@ -2,6 +2,27 @@ name: DOC-002 - Update Document
 
 on:
   workflow_dispatch:
+    inputs:
+      document_type:
+        description: "Document Type"
+        required: true
+        type: choice
+        options:
+          - api
+          - architecture
+          - runbook
+          - troubleshooting
+          - user-guide
+
+      document_name:
+        description: "Document Filename (without .md)"
+        required: true
+        type: string
+
+      update_summary:
+        description: "Summary of Update"
+        required: true
+        type: string
 
 permissions:
   contents: write
