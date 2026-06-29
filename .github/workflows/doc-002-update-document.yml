@@ -44,6 +44,13 @@ jobs:
 
           if [ -f "$FILE" ]; then
             echo "Document found."
+            echo "" >> "$FILE"
+            echo "---" >> "$FILE"
+            echo "" >> "$FILE"
+            echo "## Update History" >> "$FILE"
+            echo "" >> "$FILE"
+            echo "- $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})" >> "$FILE"
+            echo "Document updated."           
           else
             echo "Document not found!"
             exit 1
