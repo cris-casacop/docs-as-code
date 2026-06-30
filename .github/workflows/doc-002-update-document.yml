@@ -1,8 +1,13 @@
-name: DOC-002 - Update Document
+name: DOC-001 - Create Document
 
 on:
   workflow_dispatch:
     inputs:
+      title:
+        description: "Document Title"
+        required: true
+        type: string
+
       document_type:
         description: "Document Type"
         required: true
@@ -14,13 +19,8 @@ on:
           - troubleshooting
           - user-guide
 
-      document_name:
-        description: "Document Filename (without .md)"
-        required: true
-        type: string
-
-      update_summary:
-        description: "Summary of Update"
+      owner:
+        description: "Document Owner"
         required: true
         type: string
 
@@ -28,60 +28,43 @@ permissions:
   contents: write
 
 jobs:
-  update-document:
+  create-document:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
-      - name: Locate and update document
+      - name: Create document
         run: |
-          FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
+          # Create destination folder
+          mkdir -p docs/${{ inputs.document_type }}
 
-          echo "Looking for: $FILE"
+          # Convert title to filename
+          FILE_NAME=$(echo "${{ inputs.title }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
-          if [ ! -f "$FILE" ]; then
-            echo "❌ Document not found!"
-            exit 1
-          fi
+          # Full path of the new document
+          FILE="docs/${{ inputs.document_type }}/$FILE_NAME.md"
 
-          echo "✅ Document found."
+          # Copy the appropriate template
+          cp templates/${{ inputs.document_type }}-template.md "$FILE"
 
-          if grep -q "^## Update History" "$FILE"; then
-            awk -v entry="- $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})" '
-              /^## Update History$/ {
-                print
-                getline
-                print
-                print entry
-                next
-              }
-              { print }
-            ' "$FILE" > temp.md
+          # Replace placeholders
+          sed -i "s/{{TITLE}}/${{ inputs.title }}/g" "$FILE"
+          sed -i "s/{{OWNER}}/${{ inputs.owner }}/g" "$FILE"
+          sed -i "s/{{AUTHOR}}/${{ github.actor }}/g" "$FILE"
+          sed -i "s/{{DATE}}/$(date +%F)/g" "$FILE"
 
-            mv temp.md "$FILE"
+          echo "Document created:"
+          echo "$FILE"
 
-          else
-            cat >> "$FILE" <<EOF
-
----
-
-## Update History
-
-- $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})
-EOF
-          fi
-
-          echo "✅ Document updated."
-
-      - name: Commit and push updated document
+      - name: Commit and push document
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add docs/
 
-          git diff --cached --quiet || git commit -m "DOC-002: ${{ inputs.update_summary }}"
+          git diff --cached --quiet || git commit -m "DOC-001: Create ${{ inputs.title }}"
 
           git push
