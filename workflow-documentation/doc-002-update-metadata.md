@@ -1,5 +1,4 @@
 ---
-
 title: DOC-002 Update Document Metadata Workflow
 document_type: architecture
 owner: Docs-as-Code Team
@@ -11,7 +10,7 @@ version: 1.0
 created: {{DATE}}
 last_updated: {{DATE}}
 updated_by: {{AUTHOR}}
-----------------------
+---
 
 # DOC-002 Update Document Metadata Workflow
 
@@ -23,9 +22,9 @@ It ensures documentation files remain current by updating metadata fields whenev
 
 The workflow maintains consistency across documentation by automatically managing:
 
-* Last update date
-* Update owner
-* Document version
+- Last update date
+- Update owner
+- Document version
 
 ---
 
@@ -35,11 +34,11 @@ This workflow applies to Markdown documentation files stored under the `docs/` d
 
 Supported document types include:
 
-* API documentation
-* Architecture documentation
-* Runbooks
-* Troubleshooting guides
-* User guides
+- API documentation
+- Architecture documentation
+- Runbooks
+- Troubleshooting guides
+- User guides
 
 ---
 
@@ -47,14 +46,14 @@ Supported document types include:
 
 The workflow requires the following inputs:
 
-| Input          | Description                                           |
-| -------------- | ----------------------------------------------------- |
-| document_name  | Name of the document file without the `.md` extension |
-| update_summary | Description of the update being made                  |
+| Input | Description |
+|---|---|
+| document_name | Name of the document file without the `.md` extension |
+| update_summary | Description of the update being made |
 
 Example:
 
-```
+```text
 Document Name:
 configuration
 
@@ -88,7 +87,7 @@ version: X.Y
 
 Example:
 
-```
+```text
 1.0 → 1.1
 1.1 → 1.2
 ```
@@ -151,9 +150,9 @@ version: 1.1
 
 The workflow fails if:
 
-* The document cannot be found.
-* Multiple documents have the same filename.
-* The document path is invalid.
+- The document cannot be found.
+- Multiple documents have the same filename.
+- The document path is invalid.
 
 ---
 
@@ -161,14 +160,14 @@ The workflow fails if:
 
 A successful execution results in:
 
-* Updated Markdown document.
-* Updated metadata.
-* New Git commit.
-* Changes pushed to the repository.
+- Updated Markdown document.
+- Updated metadata.
+- New Git commit.
+- Changes pushed to the repository.
 
 Example commit:
 
-```
+```text
 DOC-002: Updated document metadata
 ```
 
@@ -178,18 +177,18 @@ DOC-002: Updated document metadata
 
 The workflow uses:
 
-* GitHub Actions
-* Python 3.x
-* Repository scripts
+- GitHub Actions
+- Python 3.x
+- Repository scripts
 
 ---
 
 ## Related Workflows
 
-| Workflow | Purpose                                 |
-| -------- | --------------------------------------- |
-| DOC-001  | Creates new documentation               |
-| DOC-002  | Updates existing documentation metadata |
+| Workflow | Purpose |
+|---|---|
+| DOC-001 | Creates new documentation |
+| DOC-002 | Updates existing documentation metadata |
 
 ---
 
@@ -197,7 +196,7 @@ The workflow uses:
 
 Future improvements may include:
 
-* Metadata validation.
-* Update history tracking.
-* Automated documentation quality checks.
-* Documentation publishing automation.
+- Metadata validation.
+- Update history tracking.
+- Automated documentation quality checks.
+- Documentation publishing automation.
