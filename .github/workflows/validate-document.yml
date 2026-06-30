@@ -1,0 +1,30 @@
+name: DOC-003 - Validate Document
+
+on:
+  workflow_dispatch:
+    inputs:
+      document_name:
+        description: "Document filename (without .md)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate-document:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate document
+        run: |
+          python scripts/validate_document.py \
+            "${{ inputs.document_name }}"
