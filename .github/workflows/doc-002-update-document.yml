@@ -49,12 +49,20 @@ jobs:
           if [ -f "$FILE" ]; then
             echo "✅ Document found."
 
-            echo "" >> "$FILE"
-            echo "---" >> "$FILE"
-            echo "" >> "$FILE"
-            echo "## Update History" >> "$FILE"
-            echo "" >> "$FILE"
-            echo "- $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})" >> "$FILE"
+            if grep -q "^## Update History" "$FILE"; then
+              sed -i "/^## Update History/a\\
+              - $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})
+              " "$FILE"
+            else
+              cat >> "$FILE" <<EOF
+
+              ---
+
+              ## Update History
+
+              - $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})
+              EOF
+              fi
 
             echo "Document updated."
           else
