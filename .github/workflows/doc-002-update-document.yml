@@ -39,19 +39,36 @@ jobs:
         run: |
           FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
 
+          echo "Current repository structure:"
+          find docs
+
+          echo ""
           echo "Looking for:"
           echo "$FILE"
 
           if [ -f "$FILE" ]; then
-            echo "Document found."
+            echo "✅ Document found."
+
             echo "" >> "$FILE"
             echo "---" >> "$FILE"
             echo "" >> "$FILE"
             echo "## Update History" >> "$FILE"
             echo "" >> "$FILE"
             echo "- $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})" >> "$FILE"
-            echo "Document updated."           
+
+            echo "Document updated."
           else
-            echo "Document not found!"
+            echo "❌ Document not found!"
             exit 1
           fi
+
+      - name: Commit and push updated document
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add docs/
+
+          git diff --cached --quiet || git commit -m "DOC-002: ${{ inputs.update_summary }}"
+
+          git push
