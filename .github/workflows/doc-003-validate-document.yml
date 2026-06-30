@@ -26,5 +26,5 @@ jobs:
 
       - name: Validate document
         run: |
-          python scripts/validate_document.py \
+          python scripts/validate-document.py \
             "${{ inputs.document_name }}"
