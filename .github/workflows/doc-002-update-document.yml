@@ -43,14 +43,15 @@ jobs:
 
           echo "✅ Document found."
 
-      - name: Update last_updated
+      - name: Update metadata
         run: |
           FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
 
           sed -i "s/^last_updated:.*/last_updated: $(date +%F)/" "$FILE"
+          sed -i "s/^updated_by:.*/updated_by: ${{ github.actor }}/" "$FILE"
 
           echo "Updated metadata:"
-          grep "^last_updated:" "$FILE"
+          grep -E "last_updated:|updated_by:" "$FILE"
 
       - name: Commit and push changes
         run: |
@@ -62,6 +63,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "DOC-002: Updated last_updated for ${{ inputs.document_name }}"
+            git commit -m "DOC-002: Updated metadata for ${{ inputs.document_name }}"
             git push
           fi
