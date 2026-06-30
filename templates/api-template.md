@@ -3,6 +3,10 @@ title: {{TITLE}}
 owner: {{OWNER}}
 author: {{AUTHOR}}
 created: {{DATE}}
+
+last_updated: {{DATE}}
+updated_by: {{AUTHOR}}
+version: 1.0
 status: Draft
 ---
 
