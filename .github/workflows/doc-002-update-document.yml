@@ -1,3 +1,48 @@
-- name: Update document metadata
-  run: |
-    python scripts/update_document.py "${{ inputs.document_name }}"
+name: DOC-002 - Update Document Metadata
+
+on:
+  workflow_dispatch:
+    inputs:
+      document_name:
+        description: "Document filename (without .md)"
+        required: true
+        type: string
+
+      update_summary:
+        description: "Summary of the update"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  update-document:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Locate and read document
+        run: |
+          python scripts/update_document.py "${{ inputs.document_name }}"
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add docs/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "DOC-002: ${{ inputs.update_summary }}"
+            git push
+          fi
