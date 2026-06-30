@@ -35,47 +35,45 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
-      - name: Locate document
+      - name: Locate and update document
         run: |
           FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
 
-          echo "Current repository structure:"
-          find docs
+          echo "Looking for: $FILE"
 
-          echo ""
-          echo "Looking for:"
-          echo "$FILE"
+          if [ ! -f "$FILE" ]; then
+            echo "❌ Document not found!"
+            exit 1
+          fi
+
+          echo "✅ Document found."
 
           if grep -q "^## Update History" "$FILE"; then
             awk -v entry="- $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})" '
-            /^## Update History$/ {
+              /^## Update History$/ {
                 print
                 getline
                 print
                 print entry
                 next
-            }
-            { print }
+              }
+              { print }
             ' "$FILE" > temp.md
-          
+
             mv temp.md "$FILE"
-          
+
           else
             cat >> "$FILE" <<EOF
-          
-          ---
-          
-          ## Update History
-          
-          - $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})
-          EOF
+
+---
+
+## Update History
+
+- $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})
+EOF
           fi
 
-            echo "Document updated."
-          else
-            echo "❌ Document not found!"
-            exit 1
-          fi
+          echo "✅ Document updated."
 
       - name: Commit and push updated document
         run: |
