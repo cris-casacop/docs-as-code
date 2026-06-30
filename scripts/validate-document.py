@@ -54,4 +54,18 @@ if missing:
     sys.exit(1)
 
 print("All required metadata fields exist.")
+
+version_match = re.search(
+    r"^version:\s*(\d+\.\d+)",
+    content,
+    re.MULTILINE
+)
+
+if not version_match:
+    print("Validation failed.")
+    print("Invalid version format. Expected format: X.Y")
+    sys.exit(1)
+
+print(f"Version format valid: {version_match.group(1)}")
+
 print("Validation passed.")
