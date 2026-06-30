@@ -33,24 +33,30 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
 
       - name: Create document
         run: |
+          # Create destination folder
           mkdir -p docs/${{ inputs.document_type }}
 
+          # Convert title to filename
           FILE_NAME=$(echo "${{ inputs.title }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
-          cp templates/${{ inputs.document_type }}-template.md \
-           docs/${{ inputs.document_type }}/$FILE_NAME.md
+          # Full path of the new document
+          FILE="docs/${{ inputs.document_type }}/$FILE_NAME.md"
 
-          sed -i "s/{{TITLE}}/${{ inputs.title }}/g" docs/${{ inputs.document_type }}/$FILE_NAME.md
-          sed -i "s/{{OWNER}}/${{ inputs.owner }}/g" docs/${{ inputs.document_type }}/$FILE_NAME.md
-          sed -i "s/{{AUTHOR}}/${{ github.actor }}/g" docs/${{ inputs.document_type }}/$FILE_NAME.md
-          sed -i "s/{{DATE}}/$(date +%F)/g" docs/${{ inputs.document_type }}/$FILE_NAME.md
-      
-          echo "Created:"
-          find docs
+          # Copy the appropriate template
+          cp templates/${{ inputs.document_type }}-template.md "$FILE"
+
+          # Replace placeholders
+          sed -i "s/{{TITLE}}/${{ inputs.title }}/g" "$FILE"
+          sed -i "s/{{OWNER}}/${{ inputs.owner }}/g" "$FILE"
+          sed -i "s/{{AUTHOR}}/${{ github.actor }}/g" "$FILE"
+          sed -i "s/{{DATE}}/$(date +%F)/g" "$FILE"
+
+          echo "Document created:"
+          echo "$FILE"
 
       - name: Commit and push document
         run: |
