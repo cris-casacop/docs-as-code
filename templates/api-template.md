@@ -1,15 +1,18 @@
 ---
 title: {{TITLE}}
+document_type: runbook
 owner: {{OWNER}}
 author: {{AUTHOR}}
-created: {{DATE}}
 
+status: Draft
+version: 1.0
+
+created: {{DATE}}
 last_updated: {{DATE}}
 updated_by: {{AUTHOR}}
-version: 1.0
-status: Draft
 ---
 
+# {{TITLE}}
 # {{TITLE}}
 
 ## Purpose
