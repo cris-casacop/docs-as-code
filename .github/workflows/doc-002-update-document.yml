@@ -20,7 +20,7 @@ on:
         type: string
 
       update_summary:
-        description: "Summary of Update"
+        description: "Update Summary"
         required: true
         type: string
 
@@ -32,54 +32,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Install yq
+      - name: Display repository structure
         run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
-          yq --version
+          echo "Repository contents:"
+          pwd
+          ls -la
+          echo ""
+          echo "Docs folder:"
+          find docs
 
       - name: Locate document
         run: |
           FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
 
-          echo "Looking for $FILE"
+          echo "Looking for:"
+          echo "$FILE"
 
           if [ ! -f "$FILE" ]; then
-            echo "Document not found!"
+            echo "ERROR: Document not found."
             exit 1
           fi
 
-          echo "Document found."
+          echo "SUCCESS: Document found."
 
-      - name: Update document metadata
+      - name: Update document
         run: |
           FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
 
-          CURRENT_VERSION=$(sed -n 's/^version: //p' "$FILE")
+          echo "" >> "$FILE"
+          echo "<!-- Updated: $(date +%F) by ${{ github.actor }} -->" >> "$FILE"
 
-          MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
-          MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
-
-          NEW_MINOR=$((MINOR + 1))
-          NEW_VERSION="$MAJOR.$NEW_MINOR"
-
-          sed -i "s/^last_updated:.*/last_updated: $(date +%F)/" "$FILE"
-          sed -i "s/^updated_by:.*/updated_by: ${{ github.actor }}/" "$FILE"
-          sed -i "s/^version:.*/version: $NEW_VERSION/" "$FILE"
-
-          echo "Updated metadata:"
-          grep -E "last_updated|updated_by|version" "$FILE"
-
-      - name: Commit and push document
+      - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add docs/
 
-          git diff --cached --quiet || git commit -m "DOC-002: ${{ inputs.update_summary }}"
-
-          git push
+          if git diff --cached --quiet; then
+            echo "No changes detected."
+          else
+            git commit -m "DOC-002: ${{ inputs.update_summary }}"
+            git push
+          fi
