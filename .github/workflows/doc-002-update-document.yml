@@ -20,41 +20,34 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  debug:
+  update-document:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Debug repository
+      - name: Locate document
         run: |
-          pwd
-
-          echo ""
-          echo "Current directory:"
-          ls -la
-
-          echo ""
-          echo "Docs:"
-          find docs
-
           FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
 
-          echo ""
-          echo "FILE=$FILE"
+          echo "Looking for: $FILE"
 
-          echo ""
-          echo "Checking with ls:"
-          ls -l "$FILE" || true
-
-          echo ""
-          echo "Checking with test:"
-          if test -f "$FILE"; then
-            echo "FOUND"
-          else
-            echo "NOT FOUND"
+          if [ ! -f "$FILE" ]; then
+            echo "❌ Document not found."
+            exit 1
           fi
+
+          echo "✅ Document found."
+
+      - name: Update last_updated
+        run: |
+          FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
+
+          sed -i "s/^last_updated:.*/last_updated: $(date +%F)/" "$FILE"
+
+          echo "Updated metadata:"
+          grep "^last_updated:" "$FILE"
