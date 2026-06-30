@@ -1,13 +1,8 @@
-name: DOC-001 - Create Document
+name: DOC-002 - Update Document
 
 on:
   workflow_dispatch:
     inputs:
-      title:
-        description: "Document Title"
-        required: true
-        type: string
-
       document_type:
         description: "Document Type"
         required: true
@@ -19,8 +14,13 @@ on:
           - troubleshooting
           - user-guide
 
-      owner:
-        description: "Document Owner"
+      document_name:
+        description: "Document Filename (without .md)"
+        required: true
+        type: string
+
+      update_summary:
+        description: "Summary of Update"
         required: true
         type: string
 
@@ -28,35 +28,50 @@ permissions:
   contents: write
 
 jobs:
-  create-document:
+  update-document:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
-      - name: Create document
+      - name: Install yq
         run: |
-          # Create destination folder
-          mkdir -p docs/${{ inputs.document_type }}
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
 
-          # Convert title to filename
-          FILE_NAME=$(echo "${{ inputs.title }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+      - name: Locate document
+        run: |
+          FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
 
-          # Full path of the new document
-          FILE="docs/${{ inputs.document_type }}/$FILE_NAME.md"
+          echo "Looking for $FILE"
 
-          # Copy the appropriate template
-          cp templates/${{ inputs.document_type }}-template.md "$FILE"
+          if [ ! -f "$FILE" ]; then
+            echo "Document not found!"
+            exit 1
+          fi
 
-          # Replace placeholders
-          sed -i "s/{{TITLE}}/${{ inputs.title }}/g" "$FILE"
-          sed -i "s/{{OWNER}}/${{ inputs.owner }}/g" "$FILE"
-          sed -i "s/{{AUTHOR}}/${{ github.actor }}/g" "$FILE"
-          sed -i "s/{{DATE}}/$(date +%F)/g" "$FILE"
+          echo "Document found."
 
-          echo "Document created:"
-          echo "$FILE"
+      - name: Update document metadata
+        run: |
+          FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
+
+          CURRENT_VERSION=$(sed -n 's/^version: //p' "$FILE")
+
+          MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+          MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+
+          NEW_MINOR=$((MINOR + 1))
+          NEW_VERSION="$MAJOR.$NEW_MINOR"
+
+          sed -i "s/^last_updated:.*/last_updated: $(date +%F)/" "$FILE"
+          sed -i "s/^updated_by:.*/updated_by: ${{ github.actor }}/" "$FILE"
+          sed -i "s/^version:.*/version: $NEW_VERSION/" "$FILE"
+
+          echo "Updated metadata:"
+          grep -E "last_updated|updated_by|version" "$FILE"
 
       - name: Commit and push document
         run: |
@@ -65,6 +80,6 @@ jobs:
 
           git add docs/
 
-          git diff --cached --quiet || git commit -m "DOC-001: Create ${{ inputs.title }}"
+          git diff --cached --quiet || git commit -m "DOC-002: ${{ inputs.update_summary }}"
 
           git push
