@@ -46,23 +46,30 @@ jobs:
           echo "Looking for:"
           echo "$FILE"
 
-          if [ -f "$FILE" ]; then
-            echo "✅ Document found."
-
-            if grep -q "^## Update History" "$FILE"; then
-              sed -i "/^## Update History/a\\
-              - $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})
-              " "$FILE"
-            else
-              cat >> "$FILE" <<EOF
-
-              ---
-
-              ## Update History
-
-              - $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})
-              EOF
-              fi
+          if grep -q "^## Update History" "$FILE"; then
+            awk -v entry="- $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})" '
+            /^## Update History$/ {
+                print
+                getline
+                print
+                print entry
+                next
+            }
+            { print }
+            ' "$FILE" > temp.md
+          
+            mv temp.md "$FILE"
+          
+          else
+            cat >> "$FILE" <<EOF
+          
+          ---
+          
+          ## Update History
+          
+          - $(date +%F) - ${{ inputs.update_summary }} (updated by ${{ github.actor }})
+          EOF
+          fi
 
             echo "Document updated."
           else
