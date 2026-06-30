@@ -21,5 +21,12 @@ if len(matches) > 1:
         print(file)
     sys.exit(1)
 
-print("Document found:")
-print(matches[0])
+file = matches[0]
+
+print(f"Opening {file}")
+
+content = file.read_text(encoding="utf-8")
+
+print("------------------------------------------------")
+print(content)
+print("------------------------------------------------")
