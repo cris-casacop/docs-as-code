@@ -19,62 +19,42 @@ on:
         required: true
         type: string
 
-      update_summary:
-        description: "Update Summary"
-        required: true
-        type: string
-
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  update-document:
+  debug:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Display repository structure
+      - name: Debug repository
         run: |
-          echo "Repository contents:"
           pwd
-          ls -la
+
           echo ""
-          echo "Docs folder:"
+          echo "Current directory:"
+          ls -la
+
+          echo ""
+          echo "Docs:"
           find docs
 
-      - name: Locate document
-        run: |
           FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
 
-          echo "Looking for:"
-          echo "$FILE"
+          echo ""
+          echo "FILE=$FILE"
 
-          if [ ! -f "$FILE" ]; then
-            echo "ERROR: Document not found."
-            exit 1
-          fi
+          echo ""
+          echo "Checking with ls:"
+          ls -l "$FILE" || true
 
-          echo "SUCCESS: Document found."
-
-      - name: Update document
-        run: |
-          FILE="docs/${{ inputs.document_type }}/${{ inputs.document_name }}.md"
-
-          echo "" >> "$FILE"
-          echo "<!-- Updated: $(date +%F) by ${{ github.actor }} -->" >> "$FILE"
-
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add docs/
-
-          if git diff --cached --quiet; then
-            echo "No changes detected."
+          echo ""
+          echo "Checking with test:"
+          if test -f "$FILE"; then
+            echo "FOUND"
           else
-            git commit -m "DOC-002: ${{ inputs.update_summary }}"
-            git push
+            echo "NOT FOUND"
           fi
