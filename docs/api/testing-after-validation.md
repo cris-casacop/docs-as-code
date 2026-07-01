@@ -24,4 +24,7 @@ updated_by: github-actions
 
 ## References
 [Validation](#validation)
-https://github.com
+
+[GitHub](https://github.com)
+
+[Broken](https://example.invalid)
