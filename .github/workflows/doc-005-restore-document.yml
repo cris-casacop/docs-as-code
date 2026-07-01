@@ -33,7 +33,7 @@ jobs:
 
       - name: Restore document
         run: |
-          python scripts/restore-document.py \
+          python scripts/restore_document.py \
             "${{ inputs.document_name }}"
 
       - name: Commit changes
