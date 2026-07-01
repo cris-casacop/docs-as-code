@@ -1,11 +1,7 @@
 from pathlib import Path
 
 from validators.markdown import extract_links
-from validators.internal_links import (
-    is_internal_link,
-    validate_internal_link,
-)
-from validators.anchors import validate_anchor
+from validators.dispatcher import validate_reference
 
 docs = Path("docs")
 
@@ -32,25 +28,12 @@ for document in documents:
         target = link["target"]
         total_links += 1
 
-        if target.startswith("#"):
-            anchor = target[1:]
+        passed, message = validate_reference(document, target)
 
-            if validate_anchor(document, anchor):
-                print(f"  OK     {target}")
-            else:
-                print(f"  BROKEN {target}")
-                broken_links += 1
-
-            continue
-
-        if not is_internal_link(target):
-            print(f"  SKIP   {target}")
-            continue
-
-        if validate_internal_link(document, target):
-            print(f"  OK     {target}")
+        if passed:
+            print(f"  OK     {target} ({message})")
         else:
-            print(f"  BROKEN {target}")
+            print(f"  BROKEN {target} ({message})")
             broken_links += 1
 
     print()
