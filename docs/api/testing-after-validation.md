@@ -4,8 +4,8 @@ document_type: runbook
 owner: Cris
 author: cris-casacop
 
-status: Archived
-version: 1.2
+status: Active
+version: 1.3
 
 created: 2026-07-01
 last_updated: 2026-07-01
