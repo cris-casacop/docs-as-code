@@ -13,7 +13,6 @@ updated_by: github-actions
 ---
 
 # Testing after validation
-# Testing after validation
 
 ## Purpose
 
@@ -25,3 +24,4 @@ updated_by: github-actions
 
 ## References
 [Validation](#validation)
+https://github.com
