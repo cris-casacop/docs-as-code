@@ -1,0 +1,51 @@
+name: DOC-005 - Restore Document
+
+on:
+  workflow_dispatch:
+    inputs:
+      document_name:
+        description: "Document filename (without .md)"
+        required: true
+        type: string
+
+      restore_reason:
+        description: "Reason for restoring"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  restore-document:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Restore document
+        run: |
+          python scripts/restore_document.py \
+            "${{ inputs.document_name }}"
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "DOC-005: ${{ inputs.restore_reason }}"
+            git push
+          fi
