@@ -21,4 +21,4 @@ jobs:
 
       - name: Validate Links
         run: |
-          python scripts/validate-links.py
+          python scripts/validate_links.py
