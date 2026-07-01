@@ -33,7 +33,7 @@ jobs:
 
       - name: Locate and read document
         run: |
-          python scripts/update-document.py "${{ inputs.document_name }}"
+          python scripts/update_document.py "${{ inputs.document_name }}"
 
       - name: Commit changes
         run: |
