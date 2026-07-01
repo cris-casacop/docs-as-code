@@ -5,6 +5,7 @@ from validators.internal_links import (
     is_internal_link,
     validate_internal_link,
 )
+from validators.anchors import validate_anchor
 
 docs = Path("docs")
 
@@ -17,7 +18,6 @@ broken_links = 0
 print(f"Scanning {len(documents)} documents...\n")
 
 for document in documents:
-
     total_documents += 1
 
     print(f"{document}")
@@ -29,9 +29,19 @@ for document in documents:
         continue
 
     for link in links:
-
         target = link["target"]
         total_links += 1
+
+        if target.startswith("#"):
+            anchor = target[1:]
+
+            if validate_anchor(document, anchor):
+                print(f"  OK     {target}")
+            else:
+                print(f"  BROKEN {target}")
+                broken_links += 1
+
+            continue
 
         if not is_internal_link(target):
             print(f"  SKIP   {target}")
