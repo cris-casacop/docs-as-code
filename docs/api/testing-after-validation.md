@@ -26,5 +26,3 @@ updated_by: github-actions
 [Validation](#validation)
 
 [GitHub](https://github.com)
-
-[Broken](https://example.invalid)
