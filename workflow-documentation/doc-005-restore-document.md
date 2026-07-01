@@ -1,18 +1,3 @@
----
-
-title: DOC-005 Restore Document Workflow
-document_type: architecture
-owner: Docs-as-Code Team
-author: {{AUTHOR}}
-
-status: Draft
-version: 1.0
-
-created: {{DATE}}
-last_updated: {{DATE}}
-updated_by: {{AUTHOR}}
-----------------------
-
 # DOC-005 Restore Document Workflow
 
 ## Purpose
