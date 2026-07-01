@@ -33,7 +33,7 @@ jobs:
 
       - name: Archive document
         run: |
-          python scripts/archive_document.py \
+          python scripts/archive-document.py \
             "${{ inputs.document_name }}"
 
       - name: Commit changes
