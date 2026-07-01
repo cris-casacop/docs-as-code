@@ -24,3 +24,4 @@ updated_by: github-actions
 ## Validation
 
 ## References
+[Validation](#validation)
